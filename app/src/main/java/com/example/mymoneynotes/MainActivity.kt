@@ -3,27 +3,27 @@ package com.example.mymoneynotes
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.activity.viewModels
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.mymoneynotes.ui.AddTransactionScreen
+import com.example.mymoneynotes.ui.HomeScreen
 import com.example.mymoneynotes.ui.theme.MyMoneyNotesTheme
+import com.example.mymoneynotes.viewmodel.TransactionViewModel
 
 class MainActivity : ComponentActivity() {
+    private val viewModel: TransactionViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             MyMoneyNotesTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    MyApp(viewModel)
                 }
             }
         }
@@ -31,17 +31,19 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun MyApp(viewModel: TransactionViewModel) {
+    val navController = rememberNavController()
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MyMoneyNotesTheme {
-        Greeting("Android")
+    NavHost(navController = navController, startDestination = "home") {
+        composable("home") {
+            HomeScreen(viewModel = viewModel, onAddClick = {
+                navController.navigate("add")
+            })
+        }
+        composable("add") {
+            AddTransactionScreen(viewModel = viewModel, onTransactionAdded = {
+                navController.popBackStack()
+            })
+        }
     }
 }
