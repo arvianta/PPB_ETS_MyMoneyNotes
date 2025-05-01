@@ -5,8 +5,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import com.example.mymoneynotes.model.TransactionType
 import com.example.mymoneynotes.viewmodel.TransactionViewModel
 
@@ -22,7 +22,9 @@ fun AddTransactionScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Add Transaction") })
+            TopAppBar(title = {
+                Text("Add Transaction", style = MaterialTheme.typography.displayLarge)
+            })
         }
     ) { padding ->
         Column(
@@ -32,32 +34,37 @@ fun AddTransactionScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Transaction type selector
+            Text("Type", style = MaterialTheme.typography.titleLarge)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TransactionType.values().forEach { type ->
                     FilterChip(
                         selected = selectedType == type,
                         onClick = { selectedType = type },
-                        label = { Text(type.name.lowercase().replaceFirstChar { it.uppercase() }) }
+                        label = {
+                            Text(
+                                type.name.lowercase().replaceFirstChar { it.uppercase() },
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
                     )
                 }
             }
 
-            // Category input
             OutlinedTextField(
                 value = category,
                 onValueChange = { category = it },
-                label = { Text("Category") },
-                modifier = Modifier.fillMaxWidth()
+                label = { Text("Category", style = MaterialTheme.typography.bodyLarge) },
+                modifier = Modifier.fillMaxWidth(),
+                textStyle = MaterialTheme.typography.bodyLarge
             )
 
-            // Amount input
             OutlinedTextField(
                 value = amount,
                 onValueChange = { amount = it },
-                label = { Text("Amount (Rp)") },
+                label = { Text("Amount (Rp)", style = MaterialTheme.typography.bodyLarge) },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                textStyle = MaterialTheme.typography.bodyLarge
             )
 
             Button(
@@ -65,12 +72,12 @@ fun AddTransactionScreen(
                     val parsedAmount = amount.toDoubleOrNull()
                     if (parsedAmount != null && category.isNotBlank()) {
                         viewModel.addTransaction(selectedType, category, parsedAmount)
-                        onTransactionAdded() // Go back to home
+                        onTransactionAdded()
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Add Transaction")
+                Text("Add Transaction", style = MaterialTheme.typography.titleLarge)
             }
         }
     }

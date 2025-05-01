@@ -13,16 +13,33 @@ import com.example.mymoneynotes.viewmodel.TransactionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: TransactionViewModel, onAddClick: () -> Unit) {
+fun HomeScreen(
+    viewModel: TransactionViewModel,
+    onAddClick: () -> Unit,
+    isDarkMode: Boolean,
+    onToggleTheme: () -> Unit
+) {
     val transactions = viewModel.transactions
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("MyMoney Notes") })
+            TopAppBar(
+                title = {
+                    Text("MyMoney Notes", style = MaterialTheme.typography.displayLarge)
+                },
+                actions = {
+                    TextButton(onClick = onToggleTheme) {
+                        Text(
+                            text = if (isDarkMode) "🌙 Dark" else "☀️ Light",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                }
+            )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddClick) {
-                Text("+")
+                Text("+", style = MaterialTheme.typography.titleLarge)
             }
         }
     ) { padding ->
@@ -41,14 +58,17 @@ fun HomeScreen(viewModel: TransactionViewModel, onAddClick: () -> Unit) {
                 Column(modifier = Modifier.padding(12.dp)) {
                     Text(
                         text = "Total Income: Rp %.0f".format(viewModel.totalIncome),
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
                         text = "Total Expense: Rp %.0f".format(viewModel.totalExpense),
-                        color = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
-                        text = "Net Balance: Rp %.0f".format(viewModel.netBalance)
+                        text = "Net Balance: Rp %.0f".format(viewModel.netBalance),
+                        style = MaterialTheme.typography.bodyLarge
                     )
                 }
             }
@@ -56,11 +76,12 @@ fun HomeScreen(viewModel: TransactionViewModel, onAddClick: () -> Unit) {
             // Pie Chart
             Text(
                 text = "Income vs Expense",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge
             )
             PieChartView(
                 income = viewModel.totalIncome.toFloat(),
-                expense = viewModel.totalExpense.toFloat()
+                expense = viewModel.totalExpense.toFloat(),
+                isDarkMode = isDarkMode
             )
 
             // Transaction list
@@ -69,7 +90,7 @@ fun HomeScreen(viewModel: TransactionViewModel, onAddClick: () -> Unit) {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No transactions yet.")
+                    Text("No transactions yet.", style = MaterialTheme.typography.bodyLarge)
                 }
             } else {
                 LazyColumn(
@@ -97,10 +118,10 @@ fun TransactionItem(transaction: Transaction) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(
                 text = "${transaction.type}: ${transaction.category}",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge
             )
-            Text("Amount: Rp %.0f".format(transaction.amount))
-            Text("Date: ${transaction.date}")
+            Text("Amount: Rp %.0f".format(transaction.amount), style = MaterialTheme.typography.bodyLarge)
+            Text("Date: ${transaction.date}", style = MaterialTheme.typography.labelSmall)
         }
     }
 }
